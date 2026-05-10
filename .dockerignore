@@ -1,0 +1,45 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.venv
+venv/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local credentials (will be set as env vars)
+credentials.json
+token.json
+
+# Documentation
+README.md
+*.md
+
+# Railway specific
+railway.toml

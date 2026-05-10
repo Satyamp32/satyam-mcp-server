@@ -12,7 +12,7 @@ SCOPES = [
 def get_creds():
     creds = None
     
-    # 1. Load from Environment Variable (for Render)
+    # 1. Load from Environment Variable (for Railway/Render)
     env_token = os.environ.get("GOOGLE_TOKEN_JSON")
     if env_token:
         creds = Credentials.from_authorized_user_info(json.loads(env_token), SCOPES)
@@ -25,15 +25,30 @@ def get_creds():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            if os.environ.get("RENDER"):
-                raise Exception("Missing GOOGLE_TOKEN_JSON env var or token is totally invalid.")
+            # Check if we're in a deployment environment
+            is_deployment = (
+                os.environ.get("RENDER") or 
+                os.environ.get("RAILWAY_ENVIRONMENT") or 
+                os.environ.get("RAILWAY_SERVICE_NAME") or
+                os.environ.get("RAILWAY_PROJECT_NAME")
+            )
+            
+            if is_deployment:
+                raise Exception("Missing GOOGLE_TOKEN_JSON env var or token is totally invalid for deployment.")
             
             # Local flow
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_local_server(port=0)
 
-        # Save the refreshed token locally if not on Render
-        if not os.environ.get("RENDER"):
+        # Save the refreshed token locally if not in deployment
+        is_deployment = (
+            os.environ.get("RENDER") or 
+            os.environ.get("RAILWAY_ENVIRONMENT") or 
+            os.environ.get("RAILWAY_SERVICE_NAME") or
+            os.environ.get("RAILWAY_PROJECT_NAME")
+        )
+        
+        if not is_deployment:
             with open("token.json", "w") as token:
                 token.write(creds.to_json())
                 

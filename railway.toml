@@ -1,0 +1,14 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "uvicorn server:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[env]
+PYTHON_VERSION = "3.11.9"
+AUTO_APPROVE = "true"
+PORT = "8000"
